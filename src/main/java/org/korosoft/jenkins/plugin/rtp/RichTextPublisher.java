@@ -236,8 +236,9 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
         }
         
         //vars.putAll(build.getBuildVariables());	// old code, but not needed anymore
-    
-        Matcher matcher = FILE_VAR_PATTERN.matcher(text);
+
+        String parsedText = replaceVars(text, vars);
+        Matcher matcher = FILE_VAR_PATTERN.matcher(parsedText);
         int start = 0;
         while (matcher.find(start)) {
             String fileName = matcher.group(2);
@@ -252,7 +253,7 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
             start = matcher.end();
         }
         
-        AbstractRichTextAction action = new BuildRichTextAction(build, getMarkupParser().parse(replaceVars(text, vars)));
+        AbstractRichTextAction action = new BuildRichTextAction(build, getMarkupParser().parse(replaceVars(parsedText, vars)));
         build.addAction(action);
         build.save();
         
