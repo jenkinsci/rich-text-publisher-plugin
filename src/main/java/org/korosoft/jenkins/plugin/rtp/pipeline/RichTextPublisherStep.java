@@ -2,7 +2,6 @@ package org.korosoft.jenkins.plugin.rtp.pipeline;
 
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
