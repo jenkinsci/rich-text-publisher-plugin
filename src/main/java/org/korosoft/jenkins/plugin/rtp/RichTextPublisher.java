@@ -47,7 +47,6 @@ import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.stapler.AncestorInPath;
@@ -338,7 +337,7 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
                 if (missingFiles.size() == 1) {
                     return FormValidation.warning(Messages.fileNotFound(), missingFiles.get(0));
                 }
-                return FormValidation.warning(Messages.filesNotFound(), StringUtils.join(missingFiles, ", "));
+                return FormValidation.warning(Messages.filesNotFound(), String.join(", ", missingFiles));
             } catch (InterruptedException e) {
                 return FormValidation.error(e, Messages.interrupted());
             }
