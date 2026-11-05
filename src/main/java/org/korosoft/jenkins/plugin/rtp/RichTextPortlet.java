@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.*;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 import hudson.util.FormValidation;
@@ -77,7 +78,7 @@ public class RichTextPortlet extends DashboardPortlet {
             	item = j.getItemByFullName(jobName);
             }
             if (item == null) {
-            	return String.format(Messages.jobNotFound(), jobName);
+            	return Util.escape(String.format(Messages.jobNotFound(), jobName));
             }
             
             Job<?, ?> project = (Job<?, ?>) item;
@@ -97,7 +98,7 @@ public class RichTextPortlet extends DashboardPortlet {
                 return Messages.noStableBuildsYet();
             }
         } catch (Exception e) {
-            return e.getMessage();
+            return Util.escape(e.getMessage());
         }
     }
 
