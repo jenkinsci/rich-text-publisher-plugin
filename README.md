@@ -9,15 +9,22 @@ Copyright (c) 2013 Dmitry Korotkov. See LICENSE for further details.
 
 ## Safe HTML formatting
 
-In **Manage Jenkins > System**, enable **Use safe HTML formatting** to preserve
-common HTML formatting while removing scripts, event handlers, and unsafe links.
-The setting is disabled by default for compatibility; with it disabled, messages
-use the previous unsanitized HTML behavior.
+Published rich text is sanitized by default. Scripts, event handlers, `javascript:` links, iframes and most inline
+styling are removed. Common formatting, tables (including border styles), absolute and relative links, and images are
+kept. `<font>`, `class`, `target` and `style` (except border styles on table elements) are stripped, so existing
+reports may look different after upgrading.
 
-The setting can also be enabled with Configuration as Code:
+The sanitizer also applies to messages stored by builds that ran before the upgrade.
+
+To render rich text as is, an administrator can enable **Allow unsafe HTML** in **Manage Jenkins > Security**.
+This lets anyone who can configure a job run JavaScript in the browser of anyone viewing the build
+([SECURITY-2332](https://www.jenkins.io/security/advisory/2022-06-30/#SECURITY-2332)), so only enable it if every
+user who can configure jobs is trusted.
+
+With Configuration as Code:
 
 ```yaml
-unclassified:
-	richTextPublisher:
-		safeHtmlFormatting: true
+security:
+  richTextPublisher:
+    allowUnsafeHtml: true
 ```
