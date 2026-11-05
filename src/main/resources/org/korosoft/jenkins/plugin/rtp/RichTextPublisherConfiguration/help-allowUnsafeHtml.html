@@ -1,3 +1,8 @@
 <div>
-    Sanitizes published HTML while preserving common formatting. Scripts, event handlers, and unsafe links are removed.
+    By default, published rich text is sanitized: scripts, event handlers, unsafe links and most styling are removed,
+    while common formatting, tables, absolute and relative links, and images are kept.
+    <p>
+    Checking this option renders published rich text as is. Anyone who can configure a job can then run
+    JavaScript in the browser of anyone viewing the build, which is a stored cross-site scripting vulnerability
+    (SECURITY-2332). Only enable it if every user who can configure jobs is trusted.
 </div>

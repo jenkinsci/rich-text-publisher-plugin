@@ -1,8 +1,8 @@
 package org.korosoft.jenkins.plugin.rtp;
 
 import hudson.Extension;
-import hudson.ExtensionList;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.GlobalConfigurationCategory;
 import jenkins.model.Jenkins;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -10,7 +10,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 @Extension
 @Symbol("richTextPublisher")
 public class RichTextPublisherConfiguration extends GlobalConfiguration {
-    private boolean safeHtmlFormatting;
+    private boolean allowUnsafeHtml;
 
     public RichTextPublisherConfiguration() {
         load();
@@ -21,24 +21,28 @@ public class RichTextPublisherConfiguration extends GlobalConfiguration {
         return "Rich Text Publisher";
     }
 
-    public boolean isSafeHtmlFormatting() {
-        return safeHtmlFormatting;
+    @Override
+    public GlobalConfigurationCategory getCategory() {
+        return GlobalConfigurationCategory.get(GlobalConfigurationCategory.Security.class);
+    }
+
+    public boolean isAllowUnsafeHtml() {
+        return allowUnsafeHtml;
     }
 
     @DataBoundSetter
-    public void setSafeHtmlFormatting(boolean safeHtmlFormatting) {
-        this.safeHtmlFormatting = safeHtmlFormatting;
+    public void setAllowUnsafeHtml(boolean allowUnsafeHtml) {
+        this.allowUnsafeHtml = allowUnsafeHtml;
         save();
     }
 
-    public static boolean isSafeHtmlFormattingEnabled() {
+    public static boolean isUnsafeHtmlAllowed() {
         Jenkins jenkins = Jenkins.getInstanceOrNull();
         if (jenkins == null) {
             return false;
         }
-        ExtensionList<RichTextPublisherConfiguration> configurations =
-                jenkins.getExtensionList(RichTextPublisherConfiguration.class);
-        RichTextPublisherConfiguration configuration = configurations.get(RichTextPublisherConfiguration.class);
-        return configuration != null && configuration.isSafeHtmlFormatting();
+        RichTextPublisherConfiguration configuration =
+                jenkins.getExtensionList(RichTextPublisherConfiguration.class).get(RichTextPublisherConfiguration.class);
+        return configuration != null && configuration.isAllowUnsafeHtml();
     }
 }

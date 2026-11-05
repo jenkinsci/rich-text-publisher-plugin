@@ -9,7 +9,9 @@ import org.korosoft.jenkins.plugin.rtp.RichTextPublisherConfiguration;
 import java.util.Locale;
 
 public final class HtmlSanitizer {
+    private static final String BASE_URI = "https://jenkins.invalid/";
     private static final Safelist SAFE_HTML = Safelist.relaxed()
+            .preserveRelativeLinks(true)
             .addAttributes("table", "border", "cellpadding", "cellspacing", "style")
             .addAttributes("tr", "style")
             .addAttributes("td", "border", "style")
@@ -19,7 +21,7 @@ public final class HtmlSanitizer {
     }
 
     public static String sanitize(String html) {
-        if (html == null || !RichTextPublisherConfiguration.isSafeHtmlFormattingEnabled()) {
+        if (html == null || RichTextPublisherConfiguration.isUnsafeHtmlAllowed()) {
             return html;
         }
         return sanitizeHtml(html);
@@ -41,7 +43,7 @@ public final class HtmlSanitizer {
                 }
             }
         }
-        return Jsoup.clean(document.body().html(), SAFE_HTML);
+        return Jsoup.clean(document.body().html(), BASE_URI, SAFE_HTML);
     }
 
     private static boolean isTableElement(Element element) {

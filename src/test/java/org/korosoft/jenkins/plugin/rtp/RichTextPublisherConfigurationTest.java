@@ -1,5 +1,8 @@
 package org.korosoft.jenkins.plugin.rtp;
 
+import jenkins.model.GlobalConfigurationCategory;
+import jenkins.model.Jenkins;
+import org.htmlunit.html.HtmlForm;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,45 +13,46 @@ public class RichTextPublisherConfigurationTest {
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
 
-    @Test
-    public void safeHtmlFormattingIsDisabledByDefault() {
-        Assert.assertFalse(configuration().isSafeHtmlFormatting());
-        String html = "<b>safe</b><script>alert(1)</script>";
+    private static final String HTML = "<b>safe</b><script>alert(1)</script>";
 
-        Assert.assertEquals(html, new HTMLMarkupParser().parse(html));
+    @Test
+    public void htmlIsSanitizedByDefault() {
+        Assert.assertFalse(configuration().isAllowUnsafeHtml());
+
+        String parsed = new HTMLMarkupParser().parse(HTML);
+
+        Assert.assertEquals("<b>safe</b>", parsed);
+        Assert.assertEquals("<b>safe</b>", new BuildRichTextAction(null, HTML).getRichText());
     }
 
     @Test
-    public void safeHtmlFormattingSanitizesNewAndStoredMessagesWhenEnabled() {
-        configuration().setSafeHtmlFormatting(true);
-        String html = "<b>safe</b><script>alert(1)</script>";
+    public void allowUnsafeHtmlRendersHtmlAsIs() {
+        configuration().setAllowUnsafeHtml(true);
 
-        String parsed = new HTMLMarkupParser().parse(html);
-        String stored = new BuildRichTextAction(null, parsed).getRichText();
-
-        Assert.assertTrue(parsed.contains("<b>safe</b>"));
-        Assert.assertFalse(parsed.contains("<script"));
-        Assert.assertTrue(stored.contains("<b>safe</b>"));
-        Assert.assertFalse(stored.contains("<script"));
-
-        configuration().setSafeHtmlFormatting(false);
-        String parsedWithSafeModeDisabled = new HTMLMarkupParser().parse(html);
-        Assert.assertEquals(html, parsedWithSafeModeDisabled);
-        Assert.assertEquals(parsed, new BuildRichTextAction(null, parsed).getRichText());
-        Assert.assertEquals(html, new BuildRichTextAction(null, parsedWithSafeModeDisabled).getRichText());
+        Assert.assertEquals(HTML, new HTMLMarkupParser().parse(HTML));
+        Assert.assertEquals(HTML, new BuildRichTextAction(null, HTML).getRichText());
     }
 
     @Test
-    public void repeatedPublisherCallsKeepEarlierMessagesOnTheBuild() throws Exception {
-        configuration().setSafeHtmlFormatting(false);
-        hudson.model.Run<?, ?> build = jenkins.createFreeStyleProject().scheduleBuild2(0).get();
+    public void storedMessagesAreSanitizedOnceUnsafeHtmlIsDisallowedAgain() {
+        configuration().setAllowUnsafeHtml(true);
+        BuildRichTextAction stored = new BuildRichTextAction(null, new HTMLMarkupParser().parse(HTML));
 
-        BuildRichTextAction first = new BuildRichTextAction(build, "<b>first</b>");
-        build.addAction(first);
-        BuildRichTextAction second = new BuildRichTextAction(build, "<i>second</i>");
-        build.addOrReplaceAction(second);
+        configuration().setAllowUnsafeHtml(false);
 
-        Assert.assertEquals("<b>first</b><i>second</i>", build.getAction(BuildRichTextAction.class).getRichText());
+        Assert.assertEquals("<b>safe</b>", stored.getRichText());
+    }
+
+    @Test
+    public void settingRequiresAdministerOnTheSecurityPage() throws Exception {
+        Assert.assertTrue(configuration().getCategory() instanceof GlobalConfigurationCategory.Security);
+        Assert.assertEquals(Jenkins.ADMINISTER, configuration().getRequiredGlobalConfigPagePermission());
+
+        HtmlForm form = jenkins.createWebClient().goTo("manage/configureSecurity").getFormByName("config");
+        form.getInputByName("_.allowUnsafeHtml").setChecked(true);
+        jenkins.submit(form);
+
+        Assert.assertTrue(configuration().isAllowUnsafeHtml());
     }
 
     private RichTextPublisherConfiguration configuration() {

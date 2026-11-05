@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.korosoft.jenkins.plugin.rtp.BuildRichTextAction;
 
+import java.util.Locale;
+
 public class HTMLMarkupParserTest {
     @Test
     public void removesUnsafeMarkupAndPreservesFormatting() {
@@ -30,12 +32,33 @@ public class HTMLMarkupParserTest {
     }
 
     @Test
-    public void leavesPreviouslyStoredBuildMessagesUnchangedByDefault() {
+    public void sanitizesPreviouslyStoredBuildMessagesByDefault() {
         BuildRichTextAction action = new BuildRichTextAction(null,
                 "<b>Safe formatting</b><script>alert('xss')</script>");
 
-        String result = action.getRichText();
+        Assert.assertEquals("<b>Safe formatting</b>", action.getRichText());
+    }
 
-        Assert.assertEquals("<b>Safe formatting</b><script>alert('xss')</script>", result);
+    @Test
+    public void keepsRelativeLinksAndImages() {
+        String result = HtmlSanitizer.sanitizeHtml("<a href=\"artifact/report/index.html\">report</a>"
+                + "<a href=\"/job/example/1/console\">console</a>"
+                + "<img src=\"artifact/badge.png\">"
+                + "<a href=\"https://example.com/report\">absolute</a>");
+
+        Assert.assertTrue(result.contains("<a href=\"artifact/report/index.html\">report</a>"));
+        Assert.assertTrue(result.contains("<a href=\"/job/example/1/console\">console</a>"));
+        Assert.assertTrue(result.contains("<img src=\"artifact/badge.png\">"));
+        Assert.assertTrue(result.contains("<a href=\"https://example.com/report\">absolute</a>"));
+    }
+
+    @Test
+    public void removesUnsafeUrlSchemes() {
+        String result = HtmlSanitizer.sanitizeHtml("<a href=\"javascript:alert(1)\">js</a>"
+                + "<a href=\"JaVaScRiPt:alert(1)\">mixed case</a>"
+                + "<img src=\"data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=\">");
+
+        Assert.assertFalse(result.toLowerCase(Locale.ROOT).contains("javascript:"));
+        Assert.assertFalse(result.contains("data:"));
     }
 }
