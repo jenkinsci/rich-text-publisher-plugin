@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
