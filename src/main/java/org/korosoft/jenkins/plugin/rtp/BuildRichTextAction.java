@@ -41,6 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import hudson.model.Action;
 import hudson.model.Run;
 import jenkins.tasks.SimpleBuildStep;
+import org.korosoft.jenkins.plugin.rtp.parser.HtmlSanitizer;
 
 /**
  * Rich text action for builds
@@ -55,7 +56,7 @@ public class BuildRichTextAction extends AbstractRichTextAction implements Simpl
 
     @Override
     public String getRichText() {
-        return richText;
+        return HtmlSanitizer.sanitize(richText);
     }
 
     @Override

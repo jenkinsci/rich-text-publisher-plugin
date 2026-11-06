@@ -17,10 +17,9 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
@@ -228,7 +227,7 @@ public class RichTextPublisherStep extends AbstractStepImpl {
                 if (missingFiles.size() == 1) {
                     return FormValidation.warning(Messages.fileNotFound(), missingFiles.get(0));
                 }
-                return FormValidation.warning(Messages.filesNotFound(), StringUtils.join(missingFiles, ", "));
+                return FormValidation.warning(Messages.filesNotFound(), String.join(", ", missingFiles));
             } catch (InterruptedException e) {
                 return FormValidation.error(e, Messages.interrupted());
             }

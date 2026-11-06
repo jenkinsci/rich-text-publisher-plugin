@@ -57,9 +57,9 @@ public class ConfluenceMarkupParser implements MarkupParser {
             org.eclipse.mylyn.wikitext.core.parser.MarkupParser parser = new org.eclipse.mylyn.wikitext.core.parser.MarkupParser(new ConfluenceLanguage());
             parser.setBuilder(builder);
             parser.parse(markupText);
-            return writer.toString();
+            return HtmlSanitizer.sanitize(writer.toString());
         } catch (Exception e) {
-            return "<b>" + Messages.failedToCompile() + "</b><br/>" + e.toString();
+            return HtmlSanitizer.sanitize("<b>" + Messages.failedToCompile() + "</b><br/>" + e.toString());
         }
     }
 

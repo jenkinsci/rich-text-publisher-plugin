@@ -74,9 +74,9 @@ public class WikiTextMarkupParser implements MarkupParser {
             EngProcessedPage cp = engine.postprocess(pageId, markupText, null);
             StringWriter w = new StringWriter();
             HtmlRenderer.print(null, config, w, pageTitle.getBaseTitle(), cp.getPage());
-            return w.toString();
+            return HtmlSanitizer.sanitize(w.toString());
         } catch (Exception e) {
-            return "<b>" + Messages.failedToCompile() + "</b><br/>" + e.toString();
+            return HtmlSanitizer.sanitize("<b>" + Messages.failedToCompile() + "</b><br/>" + e.toString());
         }
     }
 
