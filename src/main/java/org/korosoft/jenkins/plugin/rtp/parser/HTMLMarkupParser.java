@@ -50,7 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 public class HTMLMarkupParser implements MarkupParser {
 
     public String parse(String markupText) {
-        return markupText;
+        return HtmlSanitizer.sanitize(markupText);
     }
 
     public String getName() {

@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.HttpResponse;
+import org.korosoft.jenkins.plugin.rtp.parser.HtmlSanitizer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +75,7 @@ public class StaticTextPortlet extends DashboardPortlet {
     }
 
     public String getRichText() {
-        return richText;
+        return HtmlSanitizer.sanitize(richText);
     }
 
     public String getParserName() {
