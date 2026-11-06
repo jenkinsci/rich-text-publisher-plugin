@@ -51,6 +51,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -81,6 +82,7 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
     private Boolean failedAsStable = true;
     private Boolean abortedAsStable = true;
     private String parserName;
+    private boolean replace;
     private transient MarkupParser markupParser;
 
     @DataBoundConstructor
@@ -131,6 +133,15 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
 	public void setAbortedText(String abortedText) {
 		this.abortedText = abortedText;
 	}
+
+    public boolean isReplace() {
+        return replace;
+    }
+
+    @DataBoundSetter
+    public void setReplace(boolean replace) {
+        this.replace = replace;
+    }
 
     public boolean isUnstableAsStable() {
         return unstableAsStable;
@@ -253,7 +264,11 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
         }
         
         AbstractRichTextAction action = new BuildRichTextAction(build, getMarkupParser().parse(replaceVars(parsedText, vars)));
-        build.addAction(action);
+        if (replace) {
+            build.addOrReplaceAction(action);
+        } else {
+            build.addAction(action);
+        }
         build.save();
         
         listener.getLogger().println("RTP: Done!");

@@ -48,6 +48,7 @@ public class RichTextPublisherStep extends AbstractStepImpl {
 	private Boolean unstableAsStable = true;
 	private Boolean failedAsStable = true;
 	private Boolean abortedAsStable = true;
+	private boolean replace;
 	
 	private transient MarkupParser markupParser;
 	
@@ -126,6 +127,14 @@ public class RichTextPublisherStep extends AbstractStepImpl {
     public void setParserName(String parserName) {
         this.parserName = parserName==null? "HTML":parserName;
         this.markupParser = DescriptorImpl.markupParsers.get(parserName);
+    }
+
+    public boolean isReplace() {
+        return replace;
+    }
+    @DataBoundSetter
+    public void setReplace(boolean replace) {
+        this.replace = replace;
     }
     
     public MarkupParser getMarkupParser() {

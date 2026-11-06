@@ -63,5 +63,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <f:entry field="nullAction" title="${%rich.text.nullActionSelect}">
 		    <f:select />
 		</f:entry>
+        <f:entry field="replace" title="${%rich.text.replace}">
+            <f:checkbox/>
+        </f:entry>
     </f:advanced>
 </j:jelly>
