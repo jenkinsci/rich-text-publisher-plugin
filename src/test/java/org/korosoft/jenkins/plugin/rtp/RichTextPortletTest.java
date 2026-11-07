@@ -1,30 +1,39 @@
 package org.korosoft.jenkins.plugin.rtp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class RichTextPortletTest {
-    @Rule
-    public JenkinsRule jenkins = new JenkinsRule();
+@WithJenkins
+class RichTextPortletTest {
+    private JenkinsRule jenkins;
 
-    @Test
-    public void escapesUnknownJobName() {
-        String result = new RichTextPortlet("portlet", "<img src=x onerror=alert(1)>", false).getRichText();
-
-        Assert.assertFalse(result.contains("<img"));
-        Assert.assertTrue(result.contains("&lt;img"));
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        jenkins = rule;
     }
 
     @Test
-    public void sanitizesRichTextOfTheJob() throws Exception {
+    void escapesUnknownJobName() {
+        String result = new RichTextPortlet("portlet", "<img src=x onerror=alert(1)>", false).getRichText();
+
+        assertFalse(result.contains("<img"));
+        assertTrue(result.contains("&lt;img"));
+    }
+
+    @Test
+    void sanitizesRichTextOfTheJob() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject("job");
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
         build.addAction(new BuildRichTextAction(build, "<b>ok</b><script>alert(1)</script>"));
 
-        Assert.assertEquals("<b>ok</b>", new RichTextPortlet("portlet", "job", true).getRichText());
+        assertEquals("<b>ok</b>", new RichTextPortlet("portlet", "job", true).getRichText());
     }
 }
