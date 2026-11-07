@@ -38,7 +38,7 @@ class RichTextPublisherStepTest {
 
     @Test
     void nullActionFromAVariableIsApplied() throws Exception {
-        WorkflowRun run = runPipeline("node {\n  for (action in [1, 2, 3, 4]) {\n"
+        WorkflowRun run = runPipeline("node {\n  for (action in [0, 1, 2, 3, 4]) {\n"
                 + "    rtp nullAction: \"${action}\", stableText: 'stable', unstableText: 'unstable', abortedText: 'aborted', failedText: 'failed'\n"
                 + "  }\n}");
 
