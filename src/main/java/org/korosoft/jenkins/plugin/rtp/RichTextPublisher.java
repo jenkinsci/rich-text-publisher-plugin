@@ -216,13 +216,13 @@ public class RichTextPublisher extends Recorder implements SimpleBuildStep  {
 		
 		final String text;
 		if (build.getResult() == null){
-			if (nullAction == "1") {
+			if ("1".equals(nullAction)) {
 				text = stableText;
-			} else if (nullAction == "2") {
+			} else if ("2".equals(nullAction)) {
 				text = unstableText;
-			} else if (nullAction == "3") {
+			} else if ("3".equals(nullAction)) {
 				text = abortedText;
-			} else if (nullAction == "4") {
+			} else if ("4".equals(nullAction)) {
 				text = failedText;
 			} else {
 				listener.getLogger().println("RTP: Ignoring buildresult==null aka publishing nothing!");

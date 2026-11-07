@@ -29,6 +29,15 @@ public class RichTextPublisherStepTest {
         Assert.assertEquals(List.of("Artifact 2"), richTexts(run));
     }
 
+    @Test
+    public void nullActionFromAVariableIsApplied() throws Exception {
+        WorkflowRun run = runPipeline("node {\n  for (action in [0, 1, 2, 3, 4]) {\n"
+                + "    rtp nullAction: \"${action}\", stableText: 'stable', unstableText: 'unstable', abortedText: 'aborted', failedText: 'failed'\n"
+                + "  }\n}");
+
+        Assert.assertEquals(List.of("stable", "unstable", "aborted", "failed"), richTexts(run));
+    }
+
     private WorkflowRun runPipeline(String script) throws Exception {
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "job");
         job.setDefinition(new CpsFlowDefinition(script, true));
