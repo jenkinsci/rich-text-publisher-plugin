@@ -7,6 +7,18 @@ The following markup languages are supported: HTML, WikiText, Confluence. Build 
 
 Copyright (c) 2013 Dmitry Korotkov. See LICENSE for further details.
 
+## Publishing more than once in a build
+
+Every `rtp` call, and every Rich Text Publisher post-build step, adds its own rich text to the build. To show only the
+latest text instead, for example to update a report while the build runs, set `replace`:
+
+```groovy
+rtp parserName: 'HTML', stableText: 'Step 2 of 3 done', replace: true
+```
+
+Rich Text Publisher 1.5 and 1.6 always replaced rich text published earlier in the same build
+([JENKINS-72140](https://issues.jenkins.io/browse/JENKINS-72140)).
+
 ## Safe HTML formatting
 
 Published rich text is sanitized by default. Scripts, event handlers, `javascript:` links, iframes and most inline

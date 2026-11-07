@@ -34,6 +34,7 @@ public class RichTextPublisherStepExecution extends AbstractSynchronousNonBlocki
 	protected Void run() throws Exception {
 		
 		RichTextPublisher rtp = new RichTextPublisher(step.getStableText(), step.getUnstableText(), step.getFailedText(), step.getAbortedText(), step.getUnstableAsStable(), step.getFailedAsStable(), step.getAbortedAsStable(), step.getParserName(), step.getNullAction());
+		rtp.setReplace(step.isReplace());
 		rtp.perform(build, workspace, launcher, listener);
 		return null;
 	}
