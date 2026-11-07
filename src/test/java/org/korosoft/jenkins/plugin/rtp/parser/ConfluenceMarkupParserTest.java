@@ -34,9 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for WikiText markup parser
@@ -44,17 +45,17 @@ import org.junit.Test;
  * @author Dmitry Korotkov
  * @since 1.0
  */
-public class ConfluenceMarkupParserTest {
+class ConfluenceMarkupParserTest {
     private ConfluenceMarkupParser parser;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         parser = new ConfluenceMarkupParser();
     }
 
     @Test
-    public void testHeader() throws Exception {
+    void testHeader() throws Exception {
         String text = parser.parse("h1. Hello");
-        Assert.assertTrue("HTML Text for h1. should contain <h1> tag", text.contains("<h1"));
+        assertTrue(text.contains("<h1"), "HTML Text for h1. should contain <h1> tag");
     }
 }
