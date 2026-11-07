@@ -31,9 +31,11 @@ public class RichTextPublisherStepTest {
 
     @Test
     public void nullActionFromAVariableIsApplied() throws Exception {
-        WorkflowRun run = runPipeline("node {\n  def action = 1\n  rtp nullAction: \"${action}\", stableText: 'Artifact 1'\n}");
+        WorkflowRun run = runPipeline("node {\n  for (action in [1, 2, 3, 4]) {\n"
+                + "    rtp nullAction: \"${action}\", stableText: 'stable', unstableText: 'unstable', abortedText: 'aborted', failedText: 'failed'\n"
+                + "  }\n}");
 
-        Assert.assertEquals(List.of("Artifact 1"), richTexts(run));
+        Assert.assertEquals(List.of("stable", "unstable", "aborted", "failed"), richTexts(run));
     }
 
     private WorkflowRun runPipeline(String script) throws Exception {
